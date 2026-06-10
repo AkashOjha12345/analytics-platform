@@ -110,7 +110,7 @@ python -m app.services.ingestion_service
 ### Get Customers
 
 ```http
-GET /customers?page=1&page_size=10
+GET /mock/customers?page=1&page_size=10
 ```
 
 ---
@@ -120,13 +120,13 @@ GET /customers?page=1&page_size=10
 ### Get Orders
 
 ```http
-GET /orders?page=1&page_size=10
+GET /mock/orders?page=1&page_size=10
 ```
 
 ### Create Order
 
 ```http
-POST /orders
+POST /mock/orders
 ```
 
 Body:
@@ -146,7 +146,7 @@ Body:
 ### Get Refunds
 
 ```http
-GET /refunds?page=1&page_size=10
+GET /mock/refunds?page=1&page_size=10
 ```
 
 ---
@@ -192,11 +192,11 @@ GET /analytics/repeat-customer-revenue
 ## Revenue Trends
 
 ```http
-GET /analytics/revenue-trends
+GET /revenue-trends
 ```
 
 ## Top Customers
 
 ```http
-GET /analytics/top-customers
+GET /top-customers
 ```
