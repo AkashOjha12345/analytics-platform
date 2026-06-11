@@ -1,0 +1,151 @@
+# Architecture and Optimization Decisions
+
+## System Architecture
+
+The project follows a modular backend architecture built using FastAPI and PostgreSQL.
+
+The system is divided into the following layers:
+
+### 1. Data Generation Layer
+
+A data generation script was created using the Faker library to generate:
+
+* 100,000 Customers
+* 1,000,000 Orders
+* 200,000 Refunds
+
+A reproducible random seed was used to ensure the same dataset can be generated repeatedly.
+
+---
+
+### 2. Mock API Layer
+
+FastAPI APIs were created to expose:
+
+* Customers
+* Orders
+* Refunds
+
+Pagination was implemented using page and page_size parameters to efficiently serve large datasets without loading all records into memory.
+
+---
+
+### 3. Ingestion Service
+
+A separate ingestion service was implemented to:
+
+* Pull data from paginated APIs
+* Process records in batches
+* Store data into PostgreSQL
+
+The ingestion service continuously fetches paginated data until no records remain.
+
+---
+
+### 4. Analytics Layer
+
+Analytics APIs were developed for:
+
+* Total Orders
+* Total Revenue
+* Total Refunds
+* Net Revenue
+* Average Order Value
+* Repeat Customer Revenue
+* Revenue Trends
+* Top Customers by Spend
+
+The analytics layer uses SQL aggregation functions such as:
+
+* COUNT
+* SUM
+* AVG
+* GROUP BY
+* ORDER BY
+
+to efficiently process large datasets directly inside PostgreSQL.
+
+---
+
+# Optimization Decisions
+
+## Pagination
+
+Pagination was implemented across APIs to reduce payload size and improve API response time.
+
+Formula used:
+
+\text{offset}=(\text{page}-1)\times\text{page_size}
+
+This prevents loading massive datasets into memory at once.
+
+---
+
+## Database Optimization
+
+### Indexing
+
+Indexes were added on frequently queried columns such as:
+
+* customer_id
+* order_id
+* created_at
+
+This improves filtering, joins, and aggregation query performance.
+
+---
+
+## Efficient Aggregations
+
+Instead of processing records in Python, analytics calculations were pushed to PostgreSQL using SQL aggregation functions.
+
+This significantly reduced API processing time.
+
+---
+
+## Batch Processing
+
+The ingestion service processes records in chunks rather than loading the entire dataset into memory.
+
+This improves scalability and memory efficiency.
+
+---
+
+## Duplicate Prevention
+
+SQLAlchemy merge() was used during ingestion to avoid duplicate inserts and maintain data consistency.
+
+---
+
+## Response Time Optimization
+
+Analytics queries were designed to execute directly in PostgreSQL to maintain response times under 2 seconds on large datasets.
+
+---
+
+## Modular Project Structure
+
+The project was separated into:
+
+* Models
+* Routes
+* Services
+* Utilities
+
+This improves maintainability, scalability, and code readability.
+
+---
+
+# Load Testing
+
+Basic concurrent load testing was performed using Postman and multiple API requests.
+
+The system successfully handled concurrent requests while maintaining acceptable response times.
+
+Potential future improvements include:
+
+* Redis caching
+* Celery background jobs
+* Docker containerization
+* Materialized views
+* Async processing
